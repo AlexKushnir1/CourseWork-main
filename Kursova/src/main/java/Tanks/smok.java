@@ -106,7 +106,7 @@ public class smok extends StackPane implements Cloneable {
                 Random random = new Random();
                 makeDecision(random.nextInt(300));
             }
-        }, 0, 100);
+        }, 0, 1000);
 
 
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -269,12 +269,12 @@ public class smok extends StackPane implements Cloneable {
     }
 
     private void makeDecision(int event) {
-
         if (!isActive()) {
             if (event >= 0 && event <= 75) { // Атакувати найближчий корабель
                 moveTo(getEnemyObj());
             } else if (event > 75 && event <= 175) { // Захоплюємо іншу систему
-                moveTo(getOtherCommandSystem());
+                Flag flag = getFlag();
+                moveTo(flag);
             }
         }
     }
@@ -432,6 +432,12 @@ public class smok extends StackPane implements Cloneable {
     public static int getRandomY() {
         java.util.Random random = new java.util.Random();//Визиваємо метод Random
         return random.nextInt((int) Main.root.getContent().getPrefHeight());
+    }
+
+    public Flag getFlag() {
+        return Flag.getListFlag().stream()
+                .findAny()
+                .orElse(null);
     }
 
     public Bases getOtherCommandSystem() {

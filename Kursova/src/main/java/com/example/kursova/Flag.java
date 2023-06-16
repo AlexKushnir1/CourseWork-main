@@ -1,5 +1,7 @@
 package com.example.kursova;
 
+import Tanks.smok;
+import javafx.animation.AnimationTimer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
@@ -9,6 +11,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+
+import java.util.Iterator;
 
 public class Flag extends StackPane {
 
@@ -20,7 +24,7 @@ public class Flag extends StackPane {
     private Text num;
     private Text text;
 
-    private boolean pickedUp;
+    private smok pickedUpBy;
 
     private int y;
 
@@ -31,12 +35,8 @@ public class Flag extends StackPane {
 
         num = new Text(String.valueOf(3));
         num.setFont(Font.font("Arial", FontWeight.BOLD, 30));
-        if (pickedUp) {
-            text = new Text("Не підібраний");
-            text.setFont(Font.font("Arial", FontWeight.BOLD, 30));
-        }else {
-            text = new Text("підібраний");
-        }
+        text = new Text("Не підібраний");
+        text.setFont(Font.font("Arial", FontWeight.BOLD, 30));
         VBox vbox1 = new VBox(num);
         VBox vbox2 = new VBox(text);
         vbox1.setLayoutX(200);
@@ -47,6 +47,29 @@ public class Flag extends StackPane {
 
         getChildren().addAll(imageView);
         getChildren().addAll(vbox1, vbox2);
+
+        AnimationTimer animationTimer = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+
+                Iterator<smok> iterator = Main.root.getListObj().iterator();
+                while (iterator.hasNext()) {
+                    smok object = iterator.next();
+                    if (getBoundsInParent().intersects(object.getBoundsInParent())) {
+                        System.out.println("this fucking guy is in fucking flag. Fuck!");
+                    }
+                }
+            }
+        };
+
+    }
+
+    public void setText(Text text) {
+        this.text = text;
+    }
+
+    public void setPickedUpBy(smok pickedUpBy) {
+        this.pickedUpBy = pickedUpBy;
     }
 
     public int getX() {
