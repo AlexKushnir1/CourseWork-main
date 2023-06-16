@@ -56,12 +56,12 @@ public class Flag extends StackPane {
             public void run() {
                 num = new Text(String.valueOf(Main.root.getListObj().size()));
 
-                Iterator<smok> iterator = Main.root.getListObj().iterator();
-                while (iterator.hasNext()) {
-                    smok object = iterator.next();
+                for (smok object : Main.root.getListObj()) {
                     if (getBoundsInParent().intersects(object.getBoundsInParent()) && Flag.pickedUpBy == null) {
+                        Bases tanksCommandSystem = object.getTanksCommandSystem();
+                        tanksCommandSystem.incFlag();
                         Flag.pickedUpBy = object;
-                        object.moveTo(object.getTanksCommandSystem());
+                        object.moveTo(tanksCommandSystem);
                     }
                 }
             }

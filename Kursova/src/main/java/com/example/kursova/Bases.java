@@ -1,32 +1,27 @@
 package com.example.kursova;
 
-import Tanks.smok;
 import Tanks.grom;
+import Tanks.smok;
 import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 import java.util.Iterator;
 import java.util.Random;
 
 public class Bases extends StackPane {
 
-//    public static Image systemImage = new Image(Main.class.getResource("System.png").toString(), 400, 400, false, false);
+    //    public static Image systemImage = new Image(Main.class.getResource("System.png").toString(), 400, 400, false, false);
     private final ObservableList<smok> listObjInSys = FXCollections.observableArrayList();
     public static ObservableList<Bases> listSystem = FXCollections.observableArrayList();
     private Team team;
@@ -35,10 +30,12 @@ public class Bases extends StackPane {
     private int x;
     private int y;
     private static final int size = 800;
-//    private ImageView imageView = new ImageView(systemImage); // Текстура
+    //    private ImageView imageView = new ImageView(systemImage); // Текстура
 //    private Rectangle hitbox = new Rectangle(size, size); // Хітбокс
     private Text text;
     private Text num;
+
+    private Integer flagCounter = 0;
 
     private static Random random = new Random();
 
@@ -47,7 +44,6 @@ public class Bases extends StackPane {
 
     private int resources = 20;
     private double damage = 20;
-
 
 
     public Bases(String name, int x, int y, ImageView imageView) {
@@ -77,10 +73,10 @@ public class Bases extends StackPane {
 
         HBox vbox1 = new HBox(num);
         VBox vbox2 = new VBox(text);
-        vbox1.setLayoutX(x+200);
-        vbox1.setLayoutY(y-200);
-        vbox2.setLayoutX(x+200);
-        vbox2.setLayoutY(y-500);
+        vbox1.setLayoutX(x + 200);
+        vbox1.setLayoutY(y - 200);
+        vbox2.setLayoutX(x + 200);
+        vbox2.setLayoutY(y - 500);
         listSystem.add(this);
 //        this.getChildren().addAll(hitbox, circle, vbox);
         this.getChildren().addAll(vbox1, vbox2, imageView);   //hitbox,
@@ -148,14 +144,14 @@ public class Bases extends StackPane {
                 resources++;
                 if (getResources() >= 10) {
                     Random random1 = new Random();
-                    if(random1.nextInt(100) > 50){
+                    if (random1.nextInt(100) > 50) {
                         setResources(getResources() - 10);
                         smok obj = new smok();
                         obj.setX(getRandomXinSys());
                         obj.setY(getRandomYinSys());
                         Main.root.addObj(obj);
                         team.addObj(obj);
-                    }else {
+                    } else {
                         setResources(getResources() - 10);
                         grom obj = new grom();
                         obj.setX(getRandomXinSys());
@@ -275,12 +271,12 @@ public class Bases extends StackPane {
     }
 
     public void takeDamage(smok obj) {
-        if(this.getFraction() == null){
+        if (this.getFraction() == null) {
             // Розрахунок пошкодження атаки
             double attackDamage = obj.getArmor();
             // Застосування пошкодження до цілі
             setHp(getHp() - attackDamage);
-        }else if (!this.getFraction().equals(obj.getCommand())) {
+        } else if (!this.getFraction().equals(obj.getCommand())) {
             // Розрахунок пошкодження атаки
             double attackDamage = obj.getArmor();
             // Застосування пошкодження до цілі
@@ -307,5 +303,10 @@ public class Bases extends StackPane {
             }
         }
         return new ImageView(scaledImage);
+    }
+
+    public void incFlag() {
+        this.flagCounter += 1;
+        num = new Text(String.valueOf(this.flagCounter));
     }
 }
