@@ -99,6 +99,10 @@ public class Bases extends StackPane {
                 while (iterator.hasNext()) {
                     smok object = iterator.next();
                     if (getBoundsInParent().intersects(object.getBoundsInParent())) {
+                        if (object.equals(Flag.pickedUpBy)) {
+                            Flag.pickedUpBy = null;
+                        }
+
                         if (!listObjInSys.contains(object)) {
                             listObjInSys.add(object);
                         }

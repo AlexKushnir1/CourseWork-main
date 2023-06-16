@@ -1,34 +1,35 @@
 package Tanks;
 
 
-import java.util.*;
-
 import com.example.kursova.*;
-import javafx.animation.*;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.RotateTransition;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.*;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.*;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Rotate;
 import javafx.util.Duration;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.*;
 
 
 public class smok extends StackPane implements Cloneable {
 
 
-    private static final List<String> names = new ArrayList<>(Arrays.asList("Quadrant","Regulus","Sirius","Taurus","Umbra", "Orion", "Mars", "Jupiter",
+    private static final List<String> names = new ArrayList<>(Arrays.asList("Quadrant", "Regulus", "Sirius", "Taurus", "Umbra", "Orion", "Mars", "Jupiter",
             "Saturn", "Neptune", "Uranus", "Mercury", "Venus", "Earth", "Pluto", "Europa", "Titan", "Callisto", "Io", "Ganymede",
             "Luna", "Triton", "Rhea", "Dione", "Ceres", "Vesta", "Hygiea", "Juno", "Pallas", "Eris", "Haumea", "Makemake", "Charon", "Oberon",
             "Miranda", "Ariel", "Umbriel", "Tethys", "Enceladus", "Hyperion", "Phoebe", "Janus", "Epimetheus", "Telesto", "Calypso", "Pandora",
@@ -63,7 +64,7 @@ public class smok extends StackPane implements Cloneable {
     private ProgressBar healthBar = new ProgressBar();
 
     static {
-         System.out.println("Я статичний блок, я є");
+        System.out.println("Я статичний блок, я є");
     }
 
     {
@@ -104,7 +105,12 @@ public class smok extends StackPane implements Cloneable {
             @Override
             public void run() {
                 Random random = new Random();
-                makeDecision(random.nextInt(300));
+
+                if (getMe().equals(Flag.pickedUpBy)) {
+                    moveTo(getTanksCommandSystem());
+                } else {
+                    makeDecision(random.nextInt(300));
+                }
             }
         }, 0, 1000);
 
@@ -114,10 +120,11 @@ public class smok extends StackPane implements Cloneable {
             public void run() {
                 for (smok object : Main.root.getListObj()) {
                     if (!(object.getCommand() == getCommand())) {
-                    if (getBoundsInParent().intersects(object.getBoundsInParent())) {
-                        Platform.runLater(() -> {
-                        attack(object);
-                        });}
+                        if (getBoundsInParent().intersects(object.getBoundsInParent())) {
+                            Platform.runLater(() -> {
+                                attack(object);
+                            });
+                        }
                     }
                 }
             }
@@ -125,13 +132,18 @@ public class smok extends StackPane implements Cloneable {
     }
 
     public smok() {
-        this(getRandomName(), 100, 20, getRandomX(),getRandomY());
+        this(getRandomName(), 100, 20, getRandomX(), getRandomY());
     }
 
     public smok(@NotNull smok original) {
-        this(original.name, original.health , original.armor, original.x , original.y);}
+        this(original.name, original.health, original.armor, original.x, original.y);
+    }
 
     // Гетери
+
+    public smok getMe() {
+        return this;
+    }
 
     public Rectangle getHitbox() {
         return hitbox;
@@ -191,7 +203,7 @@ public class smok extends StackPane implements Cloneable {
 
     public void setHealth(double health) {
         this.health = health;
-        healthBar.setProgress( health /MAX_HEALTH );
+        healthBar.setProgress(health / MAX_HEALTH);
     }
 
     public void setFraction(Team team) {
@@ -214,7 +226,7 @@ public class smok extends StackPane implements Cloneable {
     private void createHealthBar() {
         healthBar = new ProgressBar();
         healthBar.setPrefWidth(smokImage.getWidth());
-        healthBar.setProgress( health /MAX_HEALTH );
+        healthBar.setProgress(health / MAX_HEALTH);
         healthBar.setStyle("-fx-accent: #41F514;");
         StackPane.setAlignment(healthBar, Pos.BOTTOM_CENTER);
     }
@@ -302,11 +314,11 @@ public class smok extends StackPane implements Cloneable {
 
 
     private double calculateDistance(Node obj) {
-        if (obj!= null){
-        double deltaX = obj.getLayoutX() - this.x;
-        double deltaY = obj.getLayoutY() - this.y;
-        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-    }else return 0.0;
+        if (obj != null) {
+            double deltaX = obj.getLayoutX() - this.x;
+            double deltaY = obj.getLayoutY() - this.y;
+            return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        } else return 0.0;
     }
 
     // Оголосити Timeline як поле класу
@@ -443,10 +455,7 @@ public class smok extends StackPane implements Cloneable {
     public Bases getOtherCommandSystem() {
         Bases bases = null;
 
-        Iterator<Bases> iterator = Bases.listSystem.iterator();
-
-        while (iterator.hasNext()) {
-            Bases sys = iterator.next();
+        for (Bases sys : Bases.listSystem) {
             if (sys.getFraction() == null || !sys.getFraction().equals(this.team)) {
                 if (calculateDistance(sys) > calculateDistance(bases)) {
                     bases = sys;
@@ -457,12 +466,26 @@ public class smok extends StackPane implements Cloneable {
         return bases;
     }
 
-
-    public Bases getNearCommandSystem(){
+    public Bases getTanksCommandSystem() {
         Bases bases = null;
-        for(Bases sys : Bases.listSystem){
-            if(sys.getFraction() != null || sys.getFraction().equals(this.team)){
-                if(calculateDistance(sys)>calculateDistance(bases)){
+
+        for (Bases sys : Bases.listSystem) {
+            if (sys.getFraction() == null || sys.getFraction().equals(this.team)) {
+                if (calculateDistance(sys) > calculateDistance(bases)) {
+                    bases = sys;
+                }
+            }
+        }
+
+        return bases;
+    }
+
+
+    public Bases getNearCommandSystem() {
+        Bases bases = null;
+        for (Bases sys : Bases.listSystem) {
+            if (sys.getFraction() != null || sys.getFraction().equals(this.team)) {
+                if (calculateDistance(sys) > calculateDistance(bases)) {
                     bases = sys;
                 }
             }
@@ -472,7 +495,7 @@ public class smok extends StackPane implements Cloneable {
 
     public void attack(smok obj) {
         double attackDamage = damage;
-        if (obj != null ) {
+        if (obj != null) {
             if (obj.getCommand() == null || !obj.getCommand().equals(this.team)) {
                 // Розрахунок пошкодження атаки
 //                double attackDamage = damage;
