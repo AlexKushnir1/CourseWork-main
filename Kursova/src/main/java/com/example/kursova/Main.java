@@ -22,7 +22,7 @@ import java.io.*;
 import java.util.*;
 
 public class Main extends Application {
-
+    // test
     public static final int WINDOW_WIDTH = 1600; // Ширина вікна
     public static final int WINDOW_HEIGHT = 800; // Висота вікна
 
