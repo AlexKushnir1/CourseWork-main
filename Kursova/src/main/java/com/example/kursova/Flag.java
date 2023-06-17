@@ -28,7 +28,7 @@ public class Flag extends StackPane {
     private int y;
 
     private static ObservableList<Flag> listFlag = FXCollections.observableArrayList();
-    private Text num;
+    private Text allTanks;
     private Text text;
     public static smok pickedUpBy;
     public Integer pickedUpCounter = 0;
@@ -41,24 +41,31 @@ public class Flag extends StackPane {
         this.x = x;
         this.y = y;
 
-//        num = new Text(100, 0, String.valueOf(Main.root.getListObj().size()));
-//        num.setFont(Font.font("Arial", FontWeight.BOLD, 30));
+        allTanks = new Text(100, 0, String.valueOf(Main.root.getListObj().size()));
+        allTanks.setFont(Font.font("Arial", FontWeight.BOLD, 30));
+
         listFlag.add(this);
-        this.text = new Text(100, 100, "Не підібраний");
+
+        text = new Text(100, 100, "Не підібраний");
         text.setFont(Font.font("Arial", FontWeight.BOLD, 30));
 
-//        VBox vbox1 = new VBox(num);
+        VBox vbox1 = new VBox(allTanks);
         VBox vbox2 = new VBox(text);
+
+        vbox1.setAlignment(Pos.TOP_LEFT);
         vbox2.setAlignment(Pos.BOTTOM_LEFT);
-        vbox2.setPadding(new Insets(0, 0, -50, 0)); // Зсув тексту вниз на 20 одиниць
-        this.getChildren().addAll(imageView, vbox2);
+
+        vbox1.setPadding(new Insets(-50, 0, 0, 0)); // Зсув тексту підібраності вниз на 20 одиниць
+        vbox2.setPadding(new Insets(0, 0, -50, 0)); // Зсув тексту підібраності вниз на 20 одиниць
+
+        this.getChildren().addAll(imageView ,vbox1,vbox2);
 //        getChildren().addAll(vbox1, vbox2);
 
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                num = new Text(String.valueOf(Main.root.getListObj().size()));
+                allTanks = new Text(String.valueOf(Main.root.getListObj().size()));
 
                 for (smok object : Main.root.getListObj()) {
                     if (getBoundsInParent().intersects(object.getBoundsInParent()) && Flag.pickedUpBy == null) {
