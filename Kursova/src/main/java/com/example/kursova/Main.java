@@ -450,7 +450,7 @@ public class Main extends Application {
 //                    }
 
                     // Елементи для кількість ресурсів
-                    Label resurseLable = new Label("Кількість танків бази : " + item.getResources());
+                    Label resurseLable = new Label("Кількість танків бази : " + item.getFractionTankCount());
 
                     // Елементи для поля координат
                     Label coordinatesLabel = new Label("Координати :(" + item.getX() + ";" + item.getY() + ")");

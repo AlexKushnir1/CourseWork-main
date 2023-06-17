@@ -17,8 +17,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-import java.util.Iterator;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Bases extends StackPane {
 
@@ -34,7 +35,7 @@ public class Bases extends StackPane {
     private static final int weight = 475;
     //    private ImageView imageView = new ImageView(systemImage); // Текстура
 //    private Rectangle hitbox = new Rectangle(size, size); // Хітбокс
-    private Text receiveFlags;
+    private Text flagCountText;
     private Text numOfTeamTanks;
 
     private Integer flagCounter = 0;
@@ -68,13 +69,13 @@ public class Bases extends StackPane {
 //        Circle circle = new Circle(200, Color.TRANSPARENT);
 //        circle.setFill(new ImagePattern(imageView.getImage()));
 
-        numOfTeamTanks = new Text(String.valueOf(listObjInSys.size()));
+        numOfTeamTanks = new Text(String.format("Танків на базі: %d", listObjInSys.size()));
         numOfTeamTanks.setFont(Font.font("Arial", FontWeight.BOLD, 30));
-        receiveFlags = new Text(name);
-        receiveFlags.setFont(Font.font("Arial", FontWeight.BOLD, 30));
+        flagCountText = new Text("Прапорів доставлено: 0");
+        flagCountText.setFont(Font.font("Arial", FontWeight.BOLD, 30));
 
         VBox vbox1 = new VBox(numOfTeamTanks);
-        VBox vbox2 = new VBox(receiveFlags);
+        VBox vbox2 = new VBox(flagCountText);
 
         vbox1.setAlignment(Pos.TOP_LEFT);
         vbox2.setAlignment(Pos.BOTTOM_LEFT);
@@ -86,22 +87,37 @@ public class Bases extends StackPane {
 //        this.getChildren().addAll(hitbox, circle, vbox);
         this.getChildren().addAll(imageView, vbox1, vbox2);   //hitbox,
 
-        AnimationTimer animationTimer = new AnimationTimer() {
+//        AnimationTimer animationTimer = new AnimationTimer() {
+//            @Override
+//            public void handle(long now) {
+//                listObjInSys.clear();
+////                circle.setRotate(circle.getRotate() + 1);
+//                for (smok object : Main.root.getListObj()) {
+//                    if (getBoundsInParent().intersects(object.getBoundsInParent())) {
+//                        if (object.equals(Flag.pickedUpBy)) {
+//                            Flag.pickedUpBy = null;
+//                            incFlagCounter();
+//                        }
+//
+//                        if (!listObjInSys.contains(object)) {
+//                            listObjInSys.add(object);
+//                        }
+//                    }
+//                }
+//                numOfTeamTanks.setText(String.valueOf(hp));
+//            }
+//        };
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
             @Override
-            public void handle(long now) {
+            public void run() {
                 listObjInSys.clear();
-//                circle.setRotate(circle.getRotate() + 1);
-                if (team != null) {
-                    receiveFlags.setText(name + " " + team.getName());
-                } else {
-                    receiveFlags.setText(name + " " + "Вільна");
-                }
-                Iterator<smok> iterator = Main.root.getListObj().iterator();
-                while (iterator.hasNext()) {
-                    smok object = iterator.next();
+
+                for (smok object : Main.root.getListObj()) {
                     if (getBoundsInParent().intersects(object.getBoundsInParent())) {
                         if (object.equals(Flag.pickedUpBy)) {
                             Flag.pickedUpBy = null;
+                            incFlagCounter();
                         }
 
                         if (!listObjInSys.contains(object)) {
@@ -109,9 +125,9 @@ public class Bases extends StackPane {
                         }
                     }
                 }
-                numOfTeamTanks.setText(String.valueOf(hp));
+                numOfTeamTanks.setText(String.format("Танків на базі: %d", listObjInSys.size()));
             }
-        };
+        }, 0, 300);
 
 //        animationTimer.start();
 
@@ -176,7 +192,7 @@ public class Bases extends StackPane {
         this.team = team;
         this.hp = maxHp;
 //        hitbox.setFill(team.getFcolor());
-        receiveFlags.setText(name + " " + team.getName());
+//        flagCountText.setText(name + " " + team.getName());
     }
 
     public void removeFraction() {
@@ -184,12 +200,18 @@ public class Bases extends StackPane {
             this.team.removeSystem(this);
             this.team = null;
 //            hitbox.setFill(Color.GRAY);
-            receiveFlags.setText(name);
+//            flagCountText.setText(name);
         }
     }
 
     public Team getFraction() {
         return team;
+    }
+
+    public Long getFractionTankCount() {
+        return Main.root.getListObj().stream()
+                .filter(t -> t.hasFraction(this.team))
+                .count();
     }
 
     public void setHp(double hp) {
@@ -310,8 +332,17 @@ public class Bases extends StackPane {
         return new ImageView(scaledImage);
     }
 
-    public void incFlag() {
+    public void incFlagCounter() {
         this.flagCounter += 1;
-        numOfTeamTanks = new Text(String.valueOf(this.flagCounter));
+        flagCountText.setText(String.format("Прапорів доставлено: %d", getFlagCounter()));
     }
+
+    public Integer getFlagCounter() {
+        return flagCounter;
+    }
+
+    public void setFlagCounter(Integer flagCounter) {
+        this.flagCounter = flagCounter;
+    }
+
 }
