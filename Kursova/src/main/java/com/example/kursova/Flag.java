@@ -3,9 +3,15 @@ package com.example.kursova;
 import Tanks.smok;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -27,6 +33,8 @@ public class Flag extends StackPane {
     public static smok pickedUpBy;
     public Integer pickedUpCounter = 0;
 
+    private static Group group = new Group();
+
 
     public Flag(int x, int y, int height, int width) {
         this.imageView = new ImageView(new Image(Main.class.getResource("flag.png").toString(), height, width, false, false));
@@ -35,19 +43,15 @@ public class Flag extends StackPane {
 
 //        num = new Text(100, 0, String.valueOf(Main.root.getListObj().size()));
 //        num.setFont(Font.font("Arial", FontWeight.BOLD, 30));
-        text = new Text(-100, -500,"Не підібраний");
-        text.setLayoutX(100);
-        text.setFont(Font.font("Arial", FontWeight.BOLD, 30));
-//        VBox vbox1 = new VBox(num);
-//        VBox vbox2 = new VBox(text);
-//        vbox1.setLayoutX(500);
-//        vbox1.setLayoutY(500);
-//        vbox2.setLayoutX(0);
-//        vbox2.setLayoutY(500);
         listFlag.add(this);
+        this.text = new Text(100, 100, "Не підібраний");
+        text.setFont(Font.font("Arial", FontWeight.BOLD, 30));
 
-        getChildren().addAll(imageView);
-        getChildren().addAll(text);
+//        VBox vbox1 = new VBox(num);
+        VBox vbox2 = new VBox(text);
+        vbox2.setAlignment(Pos.BOTTOM_LEFT);
+        vbox2.setPadding(new Insets(0, 0, -50, 0)); // Зсув тексту вниз на 20 одиниць
+        this.getChildren().addAll(imageView, vbox2);
 //        getChildren().addAll(vbox1, vbox2);
 
         Timer timer = new Timer();
