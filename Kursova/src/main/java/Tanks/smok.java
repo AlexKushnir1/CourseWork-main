@@ -495,7 +495,9 @@ public class smok extends StackPane implements Cloneable {
 
     public void attack(smok obj) {
         double attackDamage = damage;
-        if (obj != null) {
+        if (obj != null &&
+                Main.root.getListObj().contains(obj) &&
+                Main.root.getListObj().contains(this)) {
             if (obj.getCommand() == null || !obj.getCommand().equals(this.team)) {
                 // Розрахунок пошкодження атаки
 //                double attackDamage = damage;
