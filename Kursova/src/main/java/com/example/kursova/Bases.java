@@ -6,9 +6,10 @@ import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -29,11 +30,12 @@ public class Bases extends StackPane {
     public final ImageView imageView;
     private int x;
     private int y;
-    private static final int size = 800;
+    private static final int height = 600;
+    private static final int weight = 475;
     //    private ImageView imageView = new ImageView(systemImage); // Текстура
 //    private Rectangle hitbox = new Rectangle(size, size); // Хітбокс
-    private Text text;
-    private Text num;
+    private Text receiveFlags;
+    private Text numOfTeamTanks;
 
     private Integer flagCounter = 0;
 
@@ -51,7 +53,7 @@ public class Bases extends StackPane {
         this.x = x;
         this.y = y;
 
-        this.setPrefSize(size, size);
+        this.setPrefSize(weight, height);
 
         this.imageView = imageView;
 
@@ -66,20 +68,23 @@ public class Bases extends StackPane {
 //        Circle circle = new Circle(200, Color.TRANSPARENT);
 //        circle.setFill(new ImagePattern(imageView.getImage()));
 
-        num = new Text(String.valueOf(listObjInSys.size()));
-        num.setFont(Font.font("Arial", FontWeight.BOLD, 30));
-        text = new Text(name);
-        text.setFont(Font.font("Arial", FontWeight.BOLD, 30));
+        numOfTeamTanks = new Text(String.valueOf(listObjInSys.size()));
+        numOfTeamTanks.setFont(Font.font("Arial", FontWeight.BOLD, 30));
+        receiveFlags = new Text(name);
+        receiveFlags.setFont(Font.font("Arial", FontWeight.BOLD, 30));
 
-        HBox vbox1 = new HBox(num);
-        VBox vbox2 = new VBox(text);
-        vbox1.setLayoutX(x + 200);
-        vbox1.setLayoutY(y - 200);
-        vbox2.setLayoutX(x + 200);
-        vbox2.setLayoutY(y - 500);
+        VBox vbox1 = new VBox(numOfTeamTanks);
+        VBox vbox2 = new VBox(receiveFlags);
+
+        vbox1.setAlignment(Pos.TOP_LEFT);
+        vbox2.setAlignment(Pos.BOTTOM_LEFT);
+
+        vbox1.setPadding(new Insets(-30,30,0,0));
+        vbox2.setPadding(new Insets(30,30,0,0));
+
         listSystem.add(this);
 //        this.getChildren().addAll(hitbox, circle, vbox);
-        this.getChildren().addAll(vbox1, vbox2, imageView);   //hitbox,
+        this.getChildren().addAll(imageView, vbox1, vbox2);   //hitbox,
 
         AnimationTimer animationTimer = new AnimationTimer() {
             @Override
@@ -87,9 +92,9 @@ public class Bases extends StackPane {
                 listObjInSys.clear();
 //                circle.setRotate(circle.getRotate() + 1);
                 if (team != null) {
-                    text.setText(name + " " + team.getName());
+                    receiveFlags.setText(name + " " + team.getName());
                 } else {
-                    text.setText(name + " " + "Вільна");
+                    receiveFlags.setText(name + " " + "Вільна");
                 }
                 Iterator<smok> iterator = Main.root.getListObj().iterator();
                 while (iterator.hasNext()) {
@@ -104,7 +109,7 @@ public class Bases extends StackPane {
                         }
                     }
                 }
-                num.setText(String.valueOf(hp));
+                numOfTeamTanks.setText(String.valueOf(hp));
             }
         };
 
@@ -171,7 +176,7 @@ public class Bases extends StackPane {
         this.team = team;
         this.hp = maxHp;
 //        hitbox.setFill(team.getFcolor());
-        text.setText(name + " " + team.getName());
+        receiveFlags.setText(name + " " + team.getName());
     }
 
     public void removeFraction() {
@@ -179,7 +184,7 @@ public class Bases extends StackPane {
             this.team.removeSystem(this);
             this.team = null;
 //            hitbox.setFill(Color.GRAY);
-            text.setText(name);
+            receiveFlags.setText(name);
         }
     }
 
@@ -307,6 +312,6 @@ public class Bases extends StackPane {
 
     public void incFlag() {
         this.flagCounter += 1;
-        num = new Text(String.valueOf(this.flagCounter));
+        numOfTeamTanks = new Text(String.valueOf(this.flagCounter));
     }
 }
