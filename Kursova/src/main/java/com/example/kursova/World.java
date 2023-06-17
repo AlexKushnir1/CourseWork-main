@@ -10,10 +10,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @SuppressWarnings("ALL")
 public class World extends Pane {
@@ -102,6 +99,18 @@ public class World extends Pane {
 
     public ObservableList<smok> getListObj() {
         ObservableList<smok> smokObjects = FXCollections.observableArrayList();
+        Iterator<Node> iterator = content.getChildren().iterator();
+        while (iterator.hasNext()) {
+            Node node = iterator.next();
+            if (node instanceof smok) {
+                smokObjects.add((smok) node);
+            }
+        }
+        return smokObjects;
+    }
+
+    public Collection<smok> getListObj2() {
+        Collection<smok> smokObjects = Collections.synchronizedCollection(FXCollections.observableArrayList());
         Iterator<Node> iterator = content.getChildren().iterator();
         while (iterator.hasNext()) {
             Node node = iterator.next();

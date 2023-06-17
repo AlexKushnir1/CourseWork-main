@@ -38,7 +38,7 @@ public class Flag extends StackPane {
         this.x = x;
         this.y = y;
 
-        allTanks = new Text(100, 0, String.valueOf(Main.root.getListObj().size()));
+        allTanks = new Text(100, 0, "Всього танків: 0");
         allTanks.setFont(Font.font("Arial", FontWeight.BOLD, 30));
 
         listFlag.add(this);
@@ -62,18 +62,18 @@ public class Flag extends StackPane {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                allTanks = new Text(String.valueOf(Main.root.getListObj().size()));
+                allTanks.setText(String.format("Всього танків: %d", Main.root.getListObj().size()));
 
-                for (smok object : Main.root.getListObj()) {
-                    if (getBoundsInParent().intersects(object.getBoundsInParent()) && Flag.pickedUpBy == null) {
-                        Bases tanksCommandSystem = object.getTanksCommandSystem();
-                        Flag.pickedUpBy = object;
-                        object.moveTo(tanksCommandSystem);
-                    }
-                }
+                Main.root.getListObj()
+                        .forEach(object -> {
+                            if (getBoundsInParent().intersects(object.getBoundsInParent()) && Flag.pickedUpBy == null) {
+                                Bases tanksCommandSystem = object.getTanksCommandSystem();
+                                Flag.pickedUpBy = object;
+                                object.moveTo(tanksCommandSystem);
+                            }
+                        });
             }
         }, 0, 1000);
-
     }
 
     public void setText(Text text) {
