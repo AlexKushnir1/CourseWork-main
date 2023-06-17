@@ -25,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static java.util.Objects.nonNull;
+
 
 public class smok extends StackPane implements Cloneable {
 
@@ -247,6 +249,9 @@ public class smok extends StackPane implements Cloneable {
 
     public void dead() {
         Main.root.removeObj(this);
+        if (this.equals(Flag.pickedUpBy)) {
+            Flag.pickedUpBy = null;
+        }
     }
 
     @Override
@@ -282,11 +287,11 @@ public class smok extends StackPane implements Cloneable {
 
     private void makeDecision(int event) {
         if (!isActive()) {
-            if (event >= 0 && event <= 75) { // Атакувати найближчий корабель
-                moveTo(getEnemyObj());
-            } else if (event > 75 && event <= 175) { // Захоплюємо іншу систему
+            if (event > 125) { // Захоплюємо іншу систему
                 Flag flag = getFlag();
                 moveTo(flag);
+            } else {
+                moveTo(getEnemyObj());
             }
         }
     }
@@ -529,6 +534,10 @@ public class smok extends StackPane implements Cloneable {
                 }
             }
         }
+    }
+
+    public boolean hasFraction(Team team) {
+        return nonNull(this.team) && this.team.equals(team);
     }
 
 }

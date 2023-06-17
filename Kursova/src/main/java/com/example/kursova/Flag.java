@@ -3,10 +3,8 @@ package com.example.kursova;
 import Tanks.smok;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,7 +14,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -63,7 +60,6 @@ public class Flag extends StackPane {
                 for (smok object : Main.root.getListObj()) {
                     if (getBoundsInParent().intersects(object.getBoundsInParent()) && Flag.pickedUpBy == null) {
                         Bases tanksCommandSystem = object.getTanksCommandSystem();
-                        tanksCommandSystem.incFlag();
                         Flag.pickedUpBy = object;
                         object.moveTo(tanksCommandSystem);
                     }
